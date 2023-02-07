@@ -17,6 +17,7 @@ jobs:
       - name: Create build directory and run CMake
         shell: cmd
         run: |
+          mkdir cmake_install_dir
           cmake -S . -B cmake_build_dir -G "Visual Studio 16 2019" -A x64 -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=cmake_install_dir
       - name: Build project
         run: |
@@ -40,13 +41,12 @@ jobs:
     name: Ubuntu Build
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - name: Checkout submodules
-        run: git submodule update --init --recursive
+      - uses: actions/checkout@v3
+        with:
+          submodules: recursive
       - name: Create build directory and run CMake
         run: |
-          sudo apt-get -y update
-          sudo apt-get -y install freeglut3-dev
+          mkdir cmake_install_dir
           cmake -S . -B cmake_build_dir -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=cmake_install_dir
       - name: Build project
         run: |
@@ -61,25 +61,26 @@ jobs:
           path: cmake_install_dir/
         if: always()
 
-#  macos-build:
-#    name: MacOS Build
-#    runs-on: macos-latest
-#    steps:
-#      - uses: actions/checkout@v2
-#      - name: Checkout submodules
-#        run: git submodule update --init --recursive
-#      - name: Create build directory and run CMake
-#        run: |
-#          cmake -S . -B cmake_build_dir -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=cmake_install_dir
-#      - name: Build project
-#        run: |
-#          cmake --build cmake_build_dir --target install --config Release -- -j4
-#      - name: Run tests
-#        run: ctest -C Release -VV
-#        working-directory: cmake_build_dir
-#      - name: Create Artifacts
-#        uses: actions/upload-artifact@v1
-#        with:
-#          name: MacOS-Artifacts
-#          path: cmake_install_dir/
-#        if: always()
+  macos-build:
+    name: MacOS Build
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: recursive
+      - name: Create build directory and run CMake
+        run: |
+          mkdir cmake_install_dir
+          cmake -S . -B cmake_build_dir -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=cmake_install_dir
+      - name: Build project
+        run: |
+          cmake --build cmake_build_dir --target install --config Release -- -j4
+      - name: Run tests
+        run: ctest -C Release -VV
+        working-directory: cmake_build_dir
+      - name: Create Artifacts
+        uses: actions/upload-artifact@v1
+        with:
+          name: MacOS-Artifacts
+          path: cmake_install_dir/
+        if: always()

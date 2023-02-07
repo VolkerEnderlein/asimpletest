@@ -18,7 +18,7 @@ jobs:
         shell: cmd
         run: |
           mkdir cmake_install_dir
-          cmake -S . -B cmake_build_dir -G "Visual Studio 16 2019" -A x64 -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=cmake_install_dir
+          cmake -S . -B cmake_build_dir -G "Visual Studio 17 2022" -A x64 -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=cmake_install_dir
       - name: Build project
         run: |
           cmake --build cmake_build_dir --target ALL_BUILD --config Debug
@@ -74,7 +74,7 @@ jobs:
           cmake -S . -B cmake_build_dir -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=cmake_install_dir
       - name: Build project
         run: |
-          cmake --build cmake_build_dir --target install --config Release -- -j4
+          cmake --build cmake_build_dir --target install --config Release
       - name: Run tests
         run: ctest -C Release -VV
         working-directory: cmake_build_dir

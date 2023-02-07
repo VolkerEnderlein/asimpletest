@@ -9,7 +9,17 @@ file(GLOB_RECURSE PRIVATE_HEADERS_LIB source/*.h)
 file(GLOB_RECURSE SOURCES_LIB source/*.cpp)
 
 add_library(asimpletestlibrary STATIC ${HEADERS_LIB} ${PRIVATE_HEADERS_LIB} ${SOURCES_LIB})
-target_include_directories(asimpletestlibrary PUBLIC include)
+target_include_directories(asimpletestlibrary
+	PUBLIC
+		$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+		$<INSTALL_INTERFACE:include>  # <prefix>/include/${PROJECT_NAME}
+)
+install(TARGETS asimpletestlibrary EXPORT asimpletestlibrary
+	RUNTIME DESTINATION bin
+	LIBRARY DESTINATION lib
+	ARCHIVE DESTINATION lib
+	RESOURCE DESTINATION data
+)
 
 file(GLOB_RECURSE HEADERS_TEST tests/*.h)
 file(GLOB_RECURSE PRIVATE_HEADERS_TEST tests/*.h)
